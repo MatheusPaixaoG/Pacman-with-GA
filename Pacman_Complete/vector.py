@@ -38,6 +38,12 @@ class Vector2(object):
     def magnitude(self):
         return math.sqrt(self.magnitudeSquared())
 
+    def distSquaredTo(self, other):
+        return (self.x - other.x)**2 + (self.y - other.y)**2
+    
+    def distTo(self, other):
+        return math.sqrt(self.distSquaredTo(other))
+
     def copy(self):
         return Vector2(self.x, self.y)
 

@@ -11,6 +11,9 @@ from text import TextGroup
 from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
+import sys
+sys.path.append("../Useful_information")
+from Useful_information import UsefulInformation
 
 class GameController(object):
     def __init__(self):
@@ -271,9 +274,11 @@ class GameController(object):
 
 if __name__ == "__main__":
     game = GameController()
+    useful_info = UsefulInformation(game)
     game.startGame()
     while True:
         game.update()
+        useful_info.calculateDistsFromGhosts()
 
 
 
