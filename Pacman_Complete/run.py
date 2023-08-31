@@ -278,7 +278,7 @@ if __name__ == "__main__":
     game.startGame()
     while True:
         game.update()
-        useful_info.calculateDistsFromGhosts()
+        useful_info.update()
 
 
 
