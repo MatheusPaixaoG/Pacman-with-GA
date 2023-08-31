@@ -2,8 +2,8 @@ import math
 
 class Vector2(object):
     def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
+        self.x = round(x, 2)
+        self.y = round(y, 2)
         self.thresh = 0.000001
 
     def __add__(self, other):
@@ -39,10 +39,10 @@ class Vector2(object):
         return math.sqrt(self.magnitudeSquared())
 
     def distSquaredTo(self, other):
-        return (self.x - other.x)**2 + (self.y - other.y)**2
+        return round((self.x - other.x)**2 + (self.y - other.y)**2, 4)
     
     def distTo(self, other):
-        return math.sqrt(self.distSquaredTo(other))
+        return round(math.sqrt(self.distSquaredTo(other)), 2)
 
     def copy(self):
         return Vector2(self.x, self.y)
