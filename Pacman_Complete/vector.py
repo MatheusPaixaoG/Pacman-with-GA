@@ -41,8 +41,11 @@ class Vector2(object):
     def distSquaredTo(self, other):
         return round((self.x - other.x)**2 + (self.y - other.y)**2, 4)
     
-    def distTo(self, other):
+    def euclideanDistTo(self, other):
         return round(math.sqrt(self.distSquaredTo(other)), 2)
+    
+    def manhattanDistTo(self, other):
+        return round(abs(self.x - other.x) + abs(self.y - other.y), 2)
 
     def copy(self):
         return Vector2(self.x, self.y)
