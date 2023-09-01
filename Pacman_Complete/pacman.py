@@ -4,6 +4,7 @@ from vector import Vector2
 from constants import *
 from entity import Entity
 from sprites import PacmanSprites
+import random
 
 class Pacman(Entity):
     def __init__(self, node):
@@ -30,7 +31,7 @@ class Pacman(Entity):
     def update(self, dt):	
         self.sprites.update(dt)
         self.position += self.directions[self.direction]*self.speed*dt
-        direction = self.getValidKey()
+        direction = self.getRandomDirection()
         if self.overshotTarget():
             self.node = self.target
             if self.node.neighbors[PORTAL] is not None:
@@ -58,7 +59,28 @@ class Pacman(Entity):
             return LEFT
         if key_pressed[K_RIGHT]:
             return RIGHT
-        return STOP  
+        return STOP
+
+    def getDirectionFromVector(self, vector):
+        if abs(vector.x) > abs(vector.y):
+            # Move horizontally
+            if (vector.x > 0):
+                return RIGHT
+            else:
+                return LEFT
+        else:
+            # Move vertically
+            if (vector.y > 0):
+                return UP
+            else:
+                return DOWN
+            
+    def getRandomDirection(self):
+        vectorX = random.randint(-9,9)
+        vectorY = random.randint(-9,9)
+        vector = Vector2(vectorX, vectorY)
+        direction = self.getDirectionFromVector(vector)
+        return direction
 
     def eatPellets(self, pelletList):
         for pellet in pelletList:
