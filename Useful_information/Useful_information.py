@@ -1,6 +1,11 @@
 class UsefulInformation():
     def __init__(self, game_controller):
         self.gc = game_controller
+
+        self.iVecToInky = None
+        self.iVecToPinky = None
+        self.iVecToClyde = None
+        self.iVecToBlinky = None
     
     def updateDistsToGhosts(self):
         self.distFromPinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.pinky.position)
@@ -31,6 +36,13 @@ class UsefulInformation():
         print(f"VECTOR TO INKY: {self.vecToInky}")
         print(f"VECTOR TO CLYDE: {self.vecToClyde}")
         print(f"VECTOR TO BLINKY: {self.vecToBlinky}")
+
+    def inverseGhostsVectors(self):
+        pacVectorNormalized = self.gc.pacman.position.normalized
+        self.iVecToInky = pacVectorNormalized * (1/self.distFromInky)
+        self.iVecToPinky = pacVectorNormalized * (1/self.distFromPinky)
+        self.iVecToClyde = pacVectorNormalized * (1/self.distFromClyde)
+        self.iVecToBlinky = pacVectorNormalized * (1/self.distFromBlinky)
         
     def update(self):
         self.updateDistsToGhosts()
