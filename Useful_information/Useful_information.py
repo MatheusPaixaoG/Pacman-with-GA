@@ -43,6 +43,9 @@ class UsefulInformation():
         self.iVecToPinky = pacVectorNormalized * (1/self.distFromPinky)
         self.iVecToClyde = pacVectorNormalized * (1/self.distFromClyde)
         self.iVecToBlinky = pacVectorNormalized * (1/self.distFromBlinky)
+    
+    def nearestGhost(self):
+        return min([self.distFromBlinky,self.distFromClyde,self.distFromInky,self.distFromPinky])
         
     def update(self):
         self.updateDistsToGhosts()
