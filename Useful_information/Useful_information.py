@@ -38,11 +38,10 @@ class UsefulInformation():
         print(f"VECTOR TO BLINKY: {self.vecToBlinky}")
 
     def inverseGhostsVectors(self):
-        pacVectorNormalized = self.gc.pacman.position.normalized
-        self.iVecToInky = pacVectorNormalized * (1/self.distFromInky)
-        self.iVecToPinky = pacVectorNormalized * (1/self.distFromPinky)
-        self.iVecToClyde = pacVectorNormalized * (1/self.distFromClyde)
-        self.iVecToBlinky = pacVectorNormalized * (1/self.distFromBlinky)
+        self.iVecToInky = vecToInky.normalized * (1/self.distFromInky)
+        self.iVecToPinky = vecToPinky.normalized * (1/self.distFromPinky)
+        self.iVecToClyde = vecToClyde.normalized * (1/self.distFromClyde)
+        self.iVecToBlinky = vecToBlinky.normalized * (1/self.distFromBlinky)
     
     def nearestGhost(self):
         return min([self.distFromBlinky,self.distFromClyde,self.distFromInky,self.distFromPinky])
