@@ -19,6 +19,32 @@ class UsefulInformation():
         self.vecToClyde = self.gc.ghosts.clyde.position.__sub__(self.gc.pacman.position)
         self.vecToBlinky = self.gc.ghosts.blinky.position.__sub__(self.gc.pacman.position)
 
+    def updateVectorClosestPellet(self):
+        closest_pellet = None
+        min_pellet_dis = 10e10
+
+        for pellet in self.gc.pellets.pelletList:
+            dManhattan = self.gc.pacman.position.manhattanDistTo(pellet.position)
+            if dManhattan < min_pellet_dis:
+                min_pellet_dis = dManhattan
+                closest_pellet = pellet
+
+        self.vecToPellet = closest_pellet.position - self.gc.pacman.position
+        self.vecToPellet /= self.vecToPellet.magnitude()
+
+    def updateVectorClosestPowerPellet(self):
+        closest_power_pellet = None
+        min_power_pellet_dis = 10e10
+
+        for pellet in self.gc.pellets.powerpellets:
+            dManhattan = self.gc.pacman.position.manhattanDistTo(pellet.position)
+            if dManhattan < min_power_pellet_dis:
+                min_power_pellet_dis = dManhattan
+                closest_power_pellet = pellet
+
+        self.vecToPowerPellet = closest_power_pellet.position - self.gc.pacman.position
+        self.vecToPowerPellet /= self.vecToPowerPellet.magnitude()
+
     def printGhostsPositions(self):
         print(f"PINKY POS: {self.gc.ghosts.pinky.position}")
         print(f"INKY POS: {self.gc.ghosts.inky.position}")
@@ -54,3 +80,6 @@ class UsefulInformation():
     def update(self):
         self.updateDistsToGhosts()
         self.updateVectorsFromGhostsToPac()
+        self.updateVectorClosestPellet()
+        self.updateVectorClosestPowerPellet()
+        print("Pellet",self.vecToPellet,"Power:",self.vecToPowerPellet)
