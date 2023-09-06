@@ -28,10 +28,14 @@ class Pacman(Entity):
         self.alive = False
         self.direction = STOP
 
-    def update(self, dt):	
+    def update(self, dt, vecToFollow = None):	
         self.sprites.update(dt)
         self.position += self.directions[self.direction]*self.speed*dt
-        direction = self.getRandomDirection()
+        if (vecToFollow):
+            direction = self.getDirectionFromVector(vecToFollow)
+        else:
+            direction = self.getRandomDirection()
+        # direction = self.getValidKey()
         if self.overshotTarget():
             self.node = self.target
             if self.node.neighbors[PORTAL] is not None:
@@ -71,9 +75,9 @@ class Pacman(Entity):
         else:
             # Move vertically
             if (vector.y > 0):
-                return UP
-            else:
                 return DOWN
+            else:
+                return UP
             
     def getRandomDirection(self):
         vectorX = random.randint(-9,9)

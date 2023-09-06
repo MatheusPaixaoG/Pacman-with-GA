@@ -101,7 +101,7 @@ class GameController(object):
 
         
 
-    def update(self):
+    def update(self, vecToFollow):
         dt = self.clock.tick(30) / 1000.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
@@ -115,9 +115,9 @@ class GameController(object):
 
         if self.pacman.alive:
             if not self.pause.paused:
-                self.pacman.update(dt)
+                self.pacman.update(dt, vecToFollow)
         else:
-            self.pacman.update(dt)
+            self.pacman.update(dt, vecToFollow)
 
         if self.flashBG:
             self.flashTimer += dt
@@ -277,8 +277,8 @@ if __name__ == "__main__":
     useful_info = UsefulInformation(game)
     game.startGame()
     while True:
-        game.update()
         useful_info.update()
+        game.update(useful_info.vecToPellet)
 
 
 
