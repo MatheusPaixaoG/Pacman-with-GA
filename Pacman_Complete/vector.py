@@ -60,5 +60,5 @@ class Vector2(object):
         return "<"+str(self.x)+", "+str(self.y)+">"
     
     def normalized(self):
-        normalized = self / self.magnitude
+        normalized = self / self.magnitude()
         return Vector2(normalized.x, normalized.y)

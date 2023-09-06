@@ -14,10 +14,10 @@ class UsefulInformation():
         self.distFromBlinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.blinky.position)
     
     def updateVectorsFromGhostsToPac(self):
-        self.vecToPinky = self.gc.ghosts.pinky.position.__sub__(self.gc.pacman.position)
-        self.vecToInky = self.gc.ghosts.inky.position.__sub__(self.gc.pacman.position)
-        self.vecToClyde = self.gc.ghosts.clyde.position.__sub__(self.gc.pacman.position)
-        self.vecToBlinky = self.gc.ghosts.blinky.position.__sub__(self.gc.pacman.position)
+        self.vecToPinky = self.gc.pacman.position.__sub__(self.gc.ghosts.pinky.position)
+        self.vecToInky = self.gc.pacman.position.__sub__(self.gc.ghosts.inky.position)
+        self.vecToClyde = self.gc.pacman.position.__sub__(self.gc.ghosts.clyde.position)
+        self.vecToBlinky = self.gc.pacman.position.__sub__(self.gc.ghosts.blinky.position)
 
     def updateVectorClosestPellet(self):
         closest_pellet = None
@@ -63,11 +63,11 @@ class UsefulInformation():
         print(f"VECTOR TO CLYDE: {self.vecToClyde}")
         print(f"VECTOR TO BLINKY: {self.vecToBlinky}")
 
-    def inverseGhostsVectors(self):
-        self.iVecToInky = vecToInky.normalized() * (1/self.distFromInky)
-        self.iVecToPinky = vecToPinky.normalized() * (1/self.distFromPinky)
-        self.iVecToClyde = vecToClyde.normalized() * (1/self.distFromClyde)
-        self.iVecToBlinky = vecToBlinky.normalized() * (1/self.distFromBlinky)
+    def updateInverseGhostsVectors(self):
+        self.iVecToInky = self.vecToInky.normalized() * (100/self.distFromInky)
+        self.iVecToPinky = self.vecToPinky.normalized() * (100/self.distFromPinky)
+        self.iVecToClyde = self.vecToClyde.normalized() * (100/self.distFromClyde)
+        self.iVecToBlinky = self.vecToBlinky.normalized() * (100/self.distFromBlinky)
     
     def nearestGhost(self):
         min_distance = min([self.distFromBlinky,self.distFromClyde,self.distFromInky,self.distFromPinky])
@@ -76,10 +76,18 @@ class UsefulInformation():
             ghost_distance = self.gc.pacman.position.manhattanDistTo(ghost.position)
             if (ghost_distance == min_distance):
                 return ghost.position.__sub__(self.gc.pacman.position)
+    
+    def updateResultantVecFromGhosts(self):
+        self.resultantGhostVec = self.iVecToBlinky + self.iVecToInky + self.iVecToPinky + self.iVecToClyde
+
+    def updateFinalResultantVector(self):
+        self.finalResultantVec = self.resultantGhostVec + self.vecToPellet
         
     def update(self):
         self.updateDistsToGhosts()
         self.updateVectorsFromGhostsToPac()
+        self.updateInverseGhostsVectors()
         self.updateVectorClosestPellet()
         self.updateVectorClosestPowerPellet()
-        print("Pellet",self.vecToPellet,"Power:",self.vecToPowerPellet)
+        self.updateResultantVecFromGhosts()
+        self.updateFinalResultantVector()

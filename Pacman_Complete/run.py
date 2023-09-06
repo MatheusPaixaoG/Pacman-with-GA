@@ -278,7 +278,7 @@ if __name__ == "__main__":
     game.startGame()
     while True:
         useful_info.update()
-        game.update(useful_info.vecToPellet)
+        game.update(useful_info.finalResultantVec)
 
 
 
