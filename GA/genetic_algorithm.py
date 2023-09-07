@@ -1,10 +1,9 @@
 import copy
 import random
-import sys
-sys.path.append("../Useful_information")
 
 # created classes/utils
 from params_reader import WEIGHTS
+
 
 class Individual(object):
     def __init__(self, dna, rna):
@@ -30,3 +29,16 @@ class GeneticManager:
             base_parent = parents[o % len(parents)]
             child = copy.deepcopy(base_parent)
             offspring.append(child)
+
+class PopulationManager:
+    def __init__(self):
+        self._population = []
+
+    def init_population(self, size):
+        return [ Individual(dna=GeneticManager().random_dna_generator()) for _ in range(size) ]
+    
+    def tournament(self, to_select, n_parents):
+        selected = random.sample(self._population,to_select)
+        sort_selected = selected.sort(key=lambda x : x.fitness())
+        return sort_selected[:n_parents]
+    
