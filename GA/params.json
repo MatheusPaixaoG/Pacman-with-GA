@@ -1,0 +1,13 @@
+{
+    "weight_ranges": [
+        {
+            "nearest_pellet":  [0,20],
+            "nearest_food":    [1,5],
+            "distance_blinky": [7,78],
+            "distance_clyde":  [7,78],
+            "distance_inky":   [7,78],
+            "distance_pinky":  [7,78],
+            "nearest_ghost":   [0,100]
+        }
+    ]
+}
