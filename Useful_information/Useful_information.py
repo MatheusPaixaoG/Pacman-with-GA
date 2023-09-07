@@ -113,3 +113,19 @@ class UsefulInformation():
         self.updatePowerPelletsAvailability()
         self.updatePowerModeStatus()
     
+    def current_rna(self):
+        return {
+            "Vector2": [
+                self.vecToPellet,               # nearest_pellet
+                self.vecToPowerPellet,          # nearest_food
+                self.iVecToInky,                # distance_inky
+                self.iVecToPinky,               # distance_pinky
+                self.iVecToClyde,               # distance_clyde
+                self.iVecToBlinky,              # distance_blinky
+                self.vecToNearestGhost          # nearest_ghost
+            ],
+            "bool": [
+                self.powerMode,                 # super_mode (bool)
+                self.powerPelletsAvailable,     # exist_food (bool)
+            ]
+        }
