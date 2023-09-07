@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../Pacman_Complete")
+sys.path.append("../")
 
 from Pacman_Complete.constants import *
 
@@ -10,23 +10,22 @@ class UsefulInformation():
         self.powerMode = False
         self.powerPelletsAvailable = False
 
-        self.iVecToInky = None
-        self.iVecToPinky = None
-        self.iVecToClyde = None
-        self.iVecToBlinky = None
+        self.resultantGhostVec = None
         self.vecToNearestGhost = None
     
-    def updateDistsToGhosts(self):
-        self.distFromPinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.pinky.position)
-        self.distFromInky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.inky.position)
-        self.distFromClyde = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.clyde.position)
-        self.distFromBlinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.blinky.position)
+    def calculateDistsToGhosts(self):
+        distFromPinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.pinky.position)
+        distFromInky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.inky.position)
+        distFromClyde = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.clyde.position)
+        distFromBlinky = self.gc.pacman.position.manhattanDistTo(self.gc.ghosts.blinky.position)
+        return distFromPinky, distFromInky, distFromClyde, distFromBlinky
     
-    def updateVectorsFromGhostsToPac(self):
-        self.vecToPinky = self.gc.pacman.position.__sub__(self.gc.ghosts.pinky.position)
-        self.vecToInky = self.gc.pacman.position.__sub__(self.gc.ghosts.inky.position)
-        self.vecToClyde = self.gc.pacman.position.__sub__(self.gc.ghosts.clyde.position)
-        self.vecToBlinky = self.gc.pacman.position.__sub__(self.gc.ghosts.blinky.position)
+    def calculateVectorsFromGhostsToPac(self):
+        vecToPinky = self.gc.pacman.position.__sub__(self.gc.ghosts.pinky.position)
+        vecToInky = self.gc.pacman.position.__sub__(self.gc.ghosts.inky.position)
+        vecToClyde = self.gc.pacman.position.__sub__(self.gc.ghosts.clyde.position)
+        vecToBlinky = self.gc.pacman.position.__sub__(self.gc.ghosts.blinky.position)
+        return vecToPinky, vecToInky, vecToClyde, vecToBlinky
 
     def updateVectorClosestPellet(self):
         closest_pellet = None
@@ -61,25 +60,34 @@ class UsefulInformation():
         print(f"BLINKY POS: {self.gc.ghosts.blinky.position}")
 
     def printDistToGhosts(self):
-        print(f"DIST FROM PINKY: {self.distFromPinky}")
-        print(f"DIST FROM INKY: {self.distFromInky}")
-        print(f"DIST FROM CLYDE: {self.distFromClyde}")
-        print(f"DIST FROM BLINKY: {self.distFromBlinky}")
+        distToPinky, distToInky, distToClyde, distToBlinky = self.calculateDistsToGhosts()
+        print(f"DIST FROM PINKY: {distToPinky}")
+        print(f"DIST FROM INKY: {distToInky}")
+        print(f"DIST FROM CLYDE: {distToClyde}")
+        print(f"DIST FROM BLINKY: {distToBlinky}")
 
     def printVectorsToPac(self):
-        print(f"VECTOR TO PINKY: {self.vecToPinky}")
-        print(f"VECTOR TO INKY: {self.vecToInky}")
-        print(f"VECTOR TO CLYDE: {self.vecToClyde}")
-        print(f"VECTOR TO BLINKY: {self.vecToBlinky}")
+        vecToPinky, vecToInky, vecToClyde, vecToBlinky = self.calculateVectorsFromGhostsToPac()
+        print(f"VECTOR TO PINKY: {vecToPinky}")
+        print(f"VECTOR TO INKY: {vecToInky}")
+        print(f"VECTOR TO CLYDE: {vecToClyde}")
+        print(f"VECTOR TO BLINKY: {vecToBlinky}")
 
-    def updateInverseGhostsVectors(self):
-        self.iVecToInky = self.vecToInky.normalized() * (100/self.distFromInky)
-        self.iVecToPinky = self.vecToPinky.normalized() * (100/self.distFromPinky)
-        self.iVecToClyde = self.vecToClyde.normalized() * (100/self.distFromClyde)
-        self.iVecToBlinky = self.vecToBlinky.normalized() * (100/self.distFromBlinky)
+    def calculateInverseGhostsVectors(self):
+        # Calculate requirements
+        distToPinky, distToInky, distToClyde, distToBlinky = self.calculateDistsToGhosts()
+        vecToPinky, vecToInky, vecToClyde, vecToBlinky = self.calculateVectorsFromGhostsToPac()
+
+        # Calculate inverse vectors
+        iVecToInky = vecToInky.normalized() * (100/distToInky)
+        iVecToPinky = vecToPinky.normalized() * (100/distToPinky)
+        iVecToClyde = vecToClyde.normalized() * (100/distToClyde)
+        iVecToBlinky = vecToBlinky.normalized() * (100/distToBlinky)
+        return iVecToPinky, iVecToInky, iVecToClyde, iVecToBlinky
     
     def updateNearestGhost(self):
-        min_distance = min([self.distFromBlinky,self.distFromClyde,self.distFromInky,self.distFromPinky])
+        distsTuple = self.calculateDistsToGhosts()
+        min_distance = min(distsTuple)
 
         for ghost in self.gc.ghosts:
             ghost_distance = self.gc.pacman.position.manhattanDistTo(ghost.position)
@@ -87,7 +95,8 @@ class UsefulInformation():
                 self.vecToNearestGhost = ghost.position.__sub__(self.gc.pacman.position)
     
     def updateResultantVecFromGhosts(self):
-        self.resultantGhostVec = self.iVecToBlinky + self.iVecToInky + self.iVecToPinky + self.iVecToClyde
+        iVecToPinky, iVecToInky, iVecToClyde, iVecToBlinky = self.calculateInverseGhostsVectors()
+        self.resultantGhostVec = iVecToBlinky + iVecToInky + iVecToPinky + iVecToClyde
 
     def updateFinalResultantVector(self):
         self.finalResultantVec = self.resultantGhostVec + self.vecToPellet
@@ -102,14 +111,10 @@ class UsefulInformation():
                 self.powerMode = True
         
     def update(self):
-        self.updateDistsToGhosts()
-        self.updateVectorsFromGhostsToPac()
-        self.updateInverseGhostsVectors()
         self.updateVectorClosestPellet()
         self.updateVectorClosestPowerPellet()
         self.updateNearestGhost()
         self.updateResultantVecFromGhosts()
-        self.updateFinalResultantVector()
         self.updatePowerPelletsAvailability()
         self.updatePowerModeStatus()
     
@@ -118,10 +123,7 @@ class UsefulInformation():
             "Vector2": [
                 self.vecToPellet,               # nearest_pellet
                 self.vecToPowerPellet,          # nearest_food
-                self.iVecToInky,                # distance_inky
-                self.iVecToPinky,               # distance_pinky
-                self.iVecToClyde,               # distance_clyde
-                self.iVecToBlinky,              # distance_blinky
+                self.resultantGhostVec,         # distance_ghosts
                 self.vecToNearestGhost          # nearest_ghost
             ],
             "bool": [
