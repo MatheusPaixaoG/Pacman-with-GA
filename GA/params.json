@@ -1,10 +1,17 @@
 {
-    "weight_ranges": [
-        {
-            "nearest_pellet":  [0,20],
-            "nearest_food":    [1,5],
-            "distance_ghosts": [7,78],
-            "nearest_ghost":   [0,100]
-        }
-    ]
+    "normal_weights": 
+    {
+        "nearest_pellet":  [0,20],
+        "nearest_food":    [1,5],
+        "distance_ghosts": [7,78],
+        "nearest_ghost":   [0,100]
+    }
+    ,
+    "powered_weights": 
+    {
+        "nearest_pellet":  [0,50],
+        "nearest_food":    [1,5],
+        "distance_ghosts": [7,78],
+        "nearest_ghost":   [0,100]
+    }
 }
