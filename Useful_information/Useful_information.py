@@ -102,7 +102,10 @@ class UsefulInformation():
         self.finalResultantVec = self.resultantGhostVec + self.vecToPellet
     
     def updatePowerPelletsAvailability(self):
-        self.powerPelletsAvailable = True if self.gc.pellets.powerpellets != [] else False
+        self.powerPelletsAvailable = False
+        for pp in self.gc.pellets.powerpellets:
+            if pp.visible:
+                self.powerPelletsAvailable = True
 
     def updatePowerModeStatus(self):
         self.powerMode = False
