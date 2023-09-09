@@ -12,8 +12,10 @@ from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
 import sys
-sys.path.append("../Useful_information")
-from Useful_information import UsefulInformation
+sys.path.append("../")
+
+from GA.Individual import Individual
+from Useful_information.Useful_information import UsefulInformation
 
 class GameController(object):
     def __init__(self):
@@ -275,10 +277,17 @@ class GameController(object):
 if __name__ == "__main__":
     game = GameController()
     useful_info = UsefulInformation(game)
+    dummy_dna = {
+            'normal_weights': [2, 10, 0, 10],
+            'powered_weights': [1, 0, 0, 0]
+    }
+    ind = Individual(dummy_dna)
     game.startGame()
     while True:
         useful_info.update()
-        game.update(useful_info.finalResultantVec)
+        rna = useful_info.current_rna()
+        action = ind.get_action(rna)
+        game.update(action)
 
 
 
