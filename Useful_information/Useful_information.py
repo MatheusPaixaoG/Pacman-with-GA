@@ -2,6 +2,7 @@ import sys
 sys.path.append("../")
 
 from Pacman_Complete.constants import *
+from Pacman_Complete.vector import Vector2
 
 class UsefulInformation():
     def __init__(self, game_controller):
@@ -50,7 +51,9 @@ class UsefulInformation():
                 min_power_pellet_dis = dManhattan
                 closest_power_pellet = pellet
 
-        self.vecToPowerPellet = closest_power_pellet.position - self.gc.pacman.position
+        vecToPowerPelletCandidate = closest_power_pellet.position - self.gc.pacman.position
+        if (vecToPowerPelletCandidate.magnitude() != 0.0):
+            self.vecToPowerPellet = vecToPowerPelletCandidate
         self.vecToPowerPellet /= self.vecToPowerPellet.magnitude()
 
     def printGhostsPositions(self):
@@ -79,10 +82,10 @@ class UsefulInformation():
         vecToPinky, vecToInky, vecToClyde, vecToBlinky = self.calculateVectorsFromGhostsToPac()
 
         # Calculate inverse vectors
-        iVecToInky = vecToInky.normalized() * (100/distToInky)
-        iVecToPinky = vecToPinky.normalized() * (100/distToPinky)
-        iVecToClyde = vecToClyde.normalized() * (100/distToClyde)
-        iVecToBlinky = vecToBlinky.normalized() * (100/distToBlinky)
+        iVecToInky = vecToInky.normalized() * (100/(1+distToInky))
+        iVecToPinky = vecToPinky.normalized() * (100/(1+distToPinky))
+        iVecToClyde = vecToClyde.normalized() * (100/(1+distToClyde))
+        iVecToBlinky = vecToBlinky.normalized() * (100/(1+distToBlinky))
         return iVecToPinky, iVecToInky, iVecToClyde, iVecToBlinky
     
     def updateNearestGhost(self):

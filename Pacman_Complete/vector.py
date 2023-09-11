@@ -2,8 +2,8 @@ import math
 
 class Vector2(object):
     def __init__(self, x=0, y=0):
-        self.x = round(x, 2)
-        self.y = round(y, 2)
+        self.x = x
+        self.y = y
         self.thresh = 0.000001
 
     def __add__(self, other):
@@ -42,10 +42,10 @@ class Vector2(object):
         return round((self.x - other.x)**2 + (self.y - other.y)**2, 4)
     
     def euclideanDistTo(self, other):
-        return round(math.sqrt(self.distSquaredTo(other)), 2)
+        return round(math.sqrt(self.distSquaredTo(other)), 4)
     
     def manhattanDistTo(self, other):
-        return round(abs(self.x - other.x) + abs(self.y - other.y), 2)
+        return round(abs(self.x - other.x) + abs(self.y - other.y), 4)
 
     def copy(self):
         return Vector2(self.x, self.y)
@@ -60,5 +60,7 @@ class Vector2(object):
         return "<"+str(self.x)+", "+str(self.y)+">"
     
     def normalized(self):
+        if (self.magnitude() == 0.0):
+            return Vector2(0,0)
         normalized = self / self.magnitude()
         return Vector2(normalized.x, normalized.y)
