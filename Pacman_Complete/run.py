@@ -104,7 +104,7 @@ class GameController(object):
         
 
     def update(self, vecToFollow):
-        dt = self.clock.tick(30) / 1000.0
+        dt = self.clock.tick(240) / 125.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
         if not self.pause.paused:
@@ -196,7 +196,7 @@ class GameController(object):
         if self.pellets.numEaten == 50 or self.pellets.numEaten == 140:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.getNodeFromTiles(9, 20), self.level)
-                print(self.fruit)
+                # print(self.fruit)
         if self.fruit is not None:
             if self.pacman.collideCheck(self.fruit):
                 self.updateScore(self.fruit.points)
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     game = GameController()
     useful_info = UsefulInformation(game)
     dummy_dna = {
-            'normal_weights': [2, 10, 0, 10],
+            'normal_weights': [1, 0, 0, 0],
             'powered_weights': [1, 0, 0, 0]
     }
     ind = Individual(dummy_dna)
