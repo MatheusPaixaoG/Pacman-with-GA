@@ -26,9 +26,10 @@ class GameController(object):
         self.background_flash = None
         self.clock = pygame.time.Clock()
         self.fruit = None
-        self.pause = Pause(True)
+        self.pause = Pause(False)
+        self.pause.setPause(pauseTime=5)
         self.level = 0
-        self.lives = 5
+        self.lives = 3
         self.score = 0
         self.textgroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
@@ -101,19 +102,17 @@ class GameController(object):
         self.nodes.denyAccessList(12, 26, UP, self.ghosts)
         self.nodes.denyAccessList(15, 26, UP, self.ghosts)
 
-        
-
     def update(self, vecToFollow):
         dt = self.clock.tick(240) / 125.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
+        finalScore = None
         if not self.pause.paused:
             self.ghosts.update(dt)      
             if self.fruit is not None:
                 self.fruit.update(dt)
             self.checkPelletEvents()
-            self.checkGhostEvents()
-            self.checkFruitEvents()
+            finalScore = self.checkGhostEvents()
 
         if self.pacman.alive:
             if not self.pause.paused:
@@ -131,10 +130,14 @@ class GameController(object):
                     self.background = self.background_norm
 
         afterPauseMethod = self.pause.update(dt)
+        if not self.pause.paused:
+            self.textgroup.hideText()
         if afterPauseMethod is not None:
             afterPauseMethod()
         self.checkEvents()
         self.render()
+        
+        return finalScore
 
     def checkEvents(self):
         for event in pygame.event.get():
@@ -166,7 +169,7 @@ class GameController(object):
             if self.pellets.isEmpty():
                 self.flashBG = True
                 self.hideEntities()
-                self.pause.setPause(pauseTime=3, func=self.nextLevel)
+                self.pause.setPause(pauseTime=3, func=self.printScore)
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
@@ -188,9 +191,11 @@ class GameController(object):
                         self.ghosts.hide()
                         if self.lives <= 0:
                             self.textgroup.showText(GAMEOVERTXT)
-                            self.pause.setPause(pauseTime=3, func=self.restartGame)
+                            self.pause.setPause(pauseTime=1, func=self.restartGame)
+                            return self.score
                         else:
-                            self.pause.setPause(pauseTime=3, func=self.resetLevel)
+                            self.pause.setPause(pauseTime=1, func=self.resetLevel)
+        return None
     
     def checkFruitEvents(self):
         if self.pellets.numEaten == 50 or self.pellets.numEaten == 140:
@@ -228,9 +233,10 @@ class GameController(object):
         self.textgroup.updateLevel(self.level)
 
     def restartGame(self):
-        self.lives = 5
+        self.lives = 3
         self.level = 0
-        self.pause.paused = True
+        self.pause.paused = False
+        self.pause.setPause(pauseTime=5)
         self.fruit = None
         self.startGame()
         self.score = 0
@@ -241,11 +247,15 @@ class GameController(object):
         self.fruitCaptured = []
 
     def resetLevel(self):
-        self.pause.paused = True
+        self.pause.paused = False
+        self.pause.setPause(pauseTime=5)
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
         self.textgroup.showText(READYTXT)
+    
+    def printScore(self):
+        print(f"SCORE: {self.score}")
 
     def updateScore(self, points):
         self.score += points
@@ -283,11 +293,15 @@ if __name__ == "__main__":
     }
     ind = Individual(dummy_dna)
     game.startGame()
+    finalScore = None
     while True:
         useful_info.update()
         rna = useful_info.current_rna()
         action = ind.get_action(rna)
-        game.update(action)
+        finalScore = game.update(action)
+        if (finalScore):
+            ind.set_fitness(finalScore)
+        print(f"FITNESS: {ind.get_fitness()}")
 
 
 

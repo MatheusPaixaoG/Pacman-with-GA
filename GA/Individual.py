@@ -3,6 +3,7 @@ from Pacman_Complete.vector import Vector2
 class Individual(object):
     def __init__(self, dna):
         self.dna = dna   # dict {'normal_weights': list, 'powered_weights': list}
+        self.fitness = None
 
     def genotype(self, rna):
         # rna == dict {'Vector2': list, 'bool': list}
@@ -23,5 +24,8 @@ class Individual(object):
             actionVec += genotype[i]
         return actionVec
         
-    def fitness(self):
-        return "PONTUAÇÃO FINAL"
+    def set_fitness(self, fitness):
+        self.fitness = fitness
+    
+    def get_fitness(self):
+        return self.fitness
