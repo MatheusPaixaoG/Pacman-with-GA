@@ -1,6 +1,7 @@
 import copy, random
 
-from params_reader import WEIGHTS_RANGES
+from Crossover import BaseCrossover
+from params_reader import CROSSOVER, WEIGHTS_RANGES
 
 class GeneticManager:
 
@@ -10,13 +11,15 @@ class GeneticManager:
             'powered_weights': [random.uniform(i[0],i[1]) for i in WEIGHTS_RANGES['powered_weights'].values()]
         }
     
-    def crossover(self, parents, offspring_size=1, splits=0):
-        offspring = []
-        
-        for o in range(offspring_size):
-            base_parent = parents[o % len(parents)]
-            child = copy.deepcopy(base_parent)
-            offspring.append(child)
+    def crossover(self, parents):
+        if (CROSSOVER["type"] == "simple"):
+            return BaseCrossover().simple_crossover(parents)
+        elif (CROSSOVER["type"] == "normal"):
+            return BaseCrossover().normal_crossover(parents)
+        elif (CROSSOVER["type"] == "complete"):
+            return BaseCrossover().complete_crossover(parents)
+        else:
+            print("This crossover type does not exist or was not implemented.")
 
     def mutate_weights(self, weight_list):
         weight_list_len = len(weight_list)
@@ -49,5 +52,4 @@ class GeneticManager:
                 dna = self.mutate_dna(dna)
                 individual.set_dna(dna)
         new_offspring.append(individual)
-        
-        
+

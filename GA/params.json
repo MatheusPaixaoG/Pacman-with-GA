@@ -17,6 +17,7 @@
     "crossover":
     {
         "alpha": 0.7,
-        "offspring_size": 1
+        "offspring_size": 1,
+        "type": "normal"
     }
 }
