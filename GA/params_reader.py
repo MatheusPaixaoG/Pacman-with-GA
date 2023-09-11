@@ -13,4 +13,3 @@ with open(params_path) as f:
 
     
     CROSSOVER = params['crossover']
-    print(list(WEIGHTS_RANGES['normal_weights'].values()))
