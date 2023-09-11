@@ -13,6 +13,9 @@ class Individual(object):
             # Use power mode weights
             return [ rna['Vector2'][i] * self.dna['powered_weights'][i] for i in range(len(self.dna)) ]
 
+    def set_dna(self, dna):
+        self.dna = dna
+
     def get_action(self, rna):
         genotype = self.genotype(rna)
         actionVec = genotype[0]
