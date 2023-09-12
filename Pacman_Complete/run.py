@@ -78,6 +78,10 @@ class GameController(object):
         self.ghosts.clyde.startNode.denyAccess(LEFT, self.ghosts.clyde)
         self.mazedata.obj.denyGhostsAccess(self.ghosts, self.nodes)
 
+        self.pacmanSkipFrames = 25
+        self.pacmanSkipedFrames = 0
+        self.currVecToFollow = None
+
     def startGame_old(self):      
         self.mazedata.loadMaze(self.level)#######
         self.mazesprites = MazeSprites("maze1.txt", "maze1_rotation.txt")
@@ -108,7 +112,7 @@ class GameController(object):
         self.nodes.denyAccessList(15, 26, UP, self.ghosts)
 
     def update(self, vecToFollow):
-        dt = self.clock.tick(600) / 50.0
+        dt = self.clock.tick(240) / 125.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
         finalScore = None
@@ -118,12 +122,20 @@ class GameController(object):
                 self.fruit.update(dt)
             self.checkPelletEvents()
             finalScore = self.checkGhostEvents()
+        
+        # Prevents pacman flickering
+        if  self.pacmanSkipedFrames <= 0:
+            self.pacmanSkipedFrames = self.pacmanSkipFrames
+            self.currVecToFollow = vecToFollow
+        else:
+            self.pacmanSkipedFrames -= 1
+
 
         if self.pacman.alive:
             if not self.pause.paused:
-                self.pacman.update(dt, vecToFollow)
+                self.pacman.update(dt, self.currVecToFollow)
         else:
-            self.pacman.update(dt, vecToFollow)
+            self.pacman.update(dt, self.currVecToFollow)
 
         if self.flashBG:
             self.flashTimer += dt
