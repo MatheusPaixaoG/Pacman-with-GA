@@ -39,7 +39,12 @@ class UsefulInformation():
                 closest_pellet = pellet
 
         self.vecToPellet = closest_pellet.position - self.gc.pacman.position
-        self.vecToPellet /= self.vecToPellet.magnitude()
+        # Fix the vector to closest pellet if magnitude == 0
+        if(self.vecToPellet.magnitude() != 0):
+            self.vecToPellet /= self.vecToPellet.magnitude()
+        else:
+            self.vecToPellet = Vector2(0,0)
+
 
     def updateVectorClosestPowerPellet(self):
         closest_power_pellet = None
