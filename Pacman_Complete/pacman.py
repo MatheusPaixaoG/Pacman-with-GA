@@ -69,15 +69,34 @@ class Pacman(Entity):
         if abs(vector.x) > abs(vector.y):
             # Move horizontally
             if (vector.x > 0):
-                return RIGHT
+                dir = RIGHT
             else:
-                return LEFT
+                dir = LEFT
         else:
             # Move vertically
             if (vector.y > 0):
-                return DOWN
+                dir = DOWN
             else:
-                return UP
+                dir = UP
+        
+        # Prevents pacman be stucked on
+        if not self.validDirection(dir):
+            if abs(vector.x) > abs(vector.y):
+                if (vector.y > 0):
+                    dir = self.getDirectionFromVector(Vector2(0, vector.y))
+                elif (self.validDirection(DOWN)):
+                    dir = DOWN
+                else:
+                    dir = UP
+            else:
+                if (vector.x > 0):
+                    dir = self.getDirectionFromVector(Vector2(vector.x, 0))
+                elif (self.validDirection(RIGHT)):
+                    dir = RIGHT
+                else:
+                    dir = LEFT
+
+        return dir
             
     def getRandomDirection(self):
         vectorX = random.randint(-9,9)
