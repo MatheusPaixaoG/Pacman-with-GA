@@ -1,7 +1,8 @@
-import copy, random
+import copy, random, sys
+sys.path.append("../")
 
-import Individual
-from params_reader import WEIGHTS_RANGES, CROSSOVER
+from GA.Individual import Individual
+from GA.params_reader import WEIGHTS_RANGES, CROSSOVER
 
 class Crossover:
     

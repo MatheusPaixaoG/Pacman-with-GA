@@ -1,8 +1,9 @@
-import copy, random
+import random, sys
+sys.path.append("../")
 
-from Crossover import Crossover
-from Mutation import Mutation
-from params_reader import CROSSOVER, WEIGHTS_RANGES
+from GA.Crossover import Crossover
+from GA.Mutation import Mutation
+from GA.params_reader import CROSSOVER, WEIGHTS_RANGES
 
 class GeneticManager:
 

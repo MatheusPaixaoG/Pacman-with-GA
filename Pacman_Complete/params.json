@@ -20,6 +20,10 @@
         "offspring_size": 1,
         "type": "normal"
     },
+    "population":
+    {
+        "size": 10
+    },
     "run":
     {
         "iterations": 1000

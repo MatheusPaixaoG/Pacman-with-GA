@@ -1,6 +1,8 @@
-import random
+import random, sys
+sys.path.append("../")
 
-import Individual, GeneticManager
+from GA.Individual import Individual
+from GA.GeneticManager import GeneticManager
 
 class PopulationManager:
     def __init__(self, size):
