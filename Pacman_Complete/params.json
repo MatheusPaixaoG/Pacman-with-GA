@@ -20,9 +20,16 @@
         "offspring_size": 1,
         "type": "normal"
     },
+    "mutation":
+    {
+        "prob_of_mutation": 0.4
+    },
     "population":
     {
-        "size": 10
+        "size": 5,
+        "tournament_to_select": 5,
+        "tournament_n_parents": 2,
+        "survival": "elitist"
     },
     "run":
     {
