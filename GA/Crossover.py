@@ -2,7 +2,7 @@ import copy, random, sys
 sys.path.append("../")
 
 from GA.Individual import Individual
-from GA.params_reader import WEIGHTS_RANGES, CROSSOVER
+from Pacman_Complete.params_reader import WEIGHTS_RANGES, CROSSOVER
 
 class Crossover:
     

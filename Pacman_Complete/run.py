@@ -1,5 +1,9 @@
-import pygame
+# Python libs
+import pygame, sys
 from pygame.locals import *
+sys.path.append("../")
+
+# Pacman libs
 from constants import *
 from pacman import Pacman
 from nodes import NodeGroup
@@ -11,10 +15,12 @@ from text import TextGroup
 from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
-import sys
-sys.path.append("../")
 
+# GA libs
+from GA.GeneticManager import GeneticManager
+from GA.PopulationManager import PopulationManager
 from GA.Individual import Individual
+from Pacman_Complete.params_reader import load_params, RUN
 from Useful_information.Useful_information import UsefulInformation
 
 class GameController(object):
@@ -284,9 +290,25 @@ class GameController(object):
         pygame.display.update()
 
 
-if __name__ == "__main__":
+def main():
+    print(RUN)
+    load_params()
+    
+    print(RUN)
     game = GameController()
     useful_info = UsefulInformation(game)
+
+    pm = PopulationManager()
+    pm.init_population()
+
+    for iter in range(RUN['iterations']):
+        print(f"Iteration: {iter}")
+
+if __name__ == "__main__":
+    main()
+    """ game = GameController()
+    useful_info = UsefulInformation(game)
+    load_params()
     dummy_dna = {
             'normal_weights': [1, 0, 0, 0],
             'powered_weights': [1, 0, 0, 0]
@@ -301,7 +323,7 @@ if __name__ == "__main__":
         finalScore = game.update(action)
         if (finalScore):
             ind.set_fitness(finalScore)
-        print(f"FITNESS: {ind.get_fitness()}")
+        print(f"FITNESS: {ind.get_fitness()}") """
 
 
 

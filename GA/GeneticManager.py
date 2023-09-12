@@ -3,7 +3,7 @@ sys.path.append("../")
 
 from GA.Crossover import Crossover
 from GA.Mutation import Mutation
-from GA.params_reader import CROSSOVER, WEIGHTS_RANGES
+from Pacman_Complete.params_reader import CROSSOVER, WEIGHTS_RANGES
 
 class GeneticManager:
 

@@ -1,16 +1,16 @@
 import random, sys
 sys.path.append("../")
 
-from GA.Individual import Individual
 from GA.GeneticManager import GeneticManager
+from GA.Individual import Individual
+from Pacman_Complete.params_reader import POPULATION
 
 class PopulationManager:
-    def __init__(self, size):
-        self._size = size
+    def __init__(self):
         self._population = []
 
     def init_population(self):
-        self._population = [ Individual(dna=GeneticManager().random_dna_generator()) for _ in range(self._size) ]
+        self._population = [ Individual(dna=GeneticManager().random_dna_generator()) for _ in range(POPULATION['size']) ]
     
     def tournament(self, to_select, n_parents):
         selected = random.sample(self._population,to_select)
@@ -20,7 +20,7 @@ class PopulationManager:
     def survival_elitist(self, offspring):
         new_population = self._population + offspring
         sort_new_pop = new_population.sort(key=lambda x : x.fitness())
-        self._population = sort_new_pop[:self._size]
+        self._population = sort_new_pop[:POPULATION['size']]
     
     def survival_replace(self, parents, offspring):
         n_parents = len(parents)
