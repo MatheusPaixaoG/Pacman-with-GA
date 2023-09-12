@@ -19,8 +19,7 @@ from mazedata import MazeData
 # GA libs
 from GA.GeneticManager import GeneticManager
 from GA.PopulationManager import PopulationManager
-from GA.Individual import Individual
-from Pacman_Complete.params_reader import load_params, RUN
+from Pacman_Complete.params_reader import POPULATION, RUN
 from Useful_information.Useful_information import UsefulInformation
 
 class GameController(object):
@@ -291,39 +290,60 @@ class GameController(object):
 
 
 def main():
-    print(RUN)
-    load_params()
-    
-    print(RUN)
     game = GameController()
     useful_info = UsefulInformation(game)
 
+    gm = GeneticManager()
+
     pm = PopulationManager()
     pm.init_population()
+    population = pm.get_population()
 
     for iter in range(RUN['iterations']):
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print(f"Iteration: {iter}")
+        print('---------------------')
+        for ind in population:
+            print(f"Individual: {population.index(ind)}")
+            game.startGame()
+            finalScore = None
+            while True:
+                useful_info.update()
+                rna = useful_info.current_rna()
+                action = ind.get_action(rna)
+                finalScore = game.update(action)
+                if (finalScore):
+                    ind.set_fitness(finalScore)
+                    break
+            print(f"FITNESS: {ind.get_fitness()}")
+
+        parents = pm.tournament()
+        offspring = gm.crossover(parents)
+        mutated_offspring = gm.mutation(offspring)
+
+        for ind in mutated_offspring:
+            game.startGame()
+            finalScore = None
+            while True:
+                useful_info.update()
+                rna = useful_info.current_rna()
+                action = ind.get_action(rna)
+                finalScore = game.update(action)
+                if (finalScore):
+                    ind.set_fitness(finalScore)
+                    break
+
+        if POPULATION['survival'] == 'elitist':
+            pm.survival_elitist(mutated_offspring)
+        elif POPULATION['survival'] == 'replace':
+            pm.survival_replace(parents, mutated_offspring)
+        
+        # TODO: Critérios de parada e sua checagem
+
+
 
 if __name__ == "__main__":
     main()
-    """ game = GameController()
-    useful_info = UsefulInformation(game)
-    load_params()
-    dummy_dna = {
-            'normal_weights': [1, 0, 0, 0],
-            'powered_weights': [1, 0, 0, 0]
-    }
-    ind = Individual(dummy_dna)
-    game.startGame()
-    finalScore = None
-    while True:
-        useful_info.update()
-        rna = useful_info.current_rna()
-        action = ind.get_action(rna)
-        finalScore = game.update(action)
-        if (finalScore):
-            ind.set_fitness(finalScore)
-        print(f"FITNESS: {ind.get_fitness()}") """
 
 
 
