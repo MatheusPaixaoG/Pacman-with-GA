@@ -19,5 +19,9 @@
         "alpha": 0.7,
         "offspring_size": 1,
         "type": "normal"
+    },
+    "run":
+    {
+        "iterations": 1000
     }
 }

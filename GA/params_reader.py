@@ -2,6 +2,7 @@ import json
 
 WEIGHTS_RANGES = {}
 CROSSOVER = {}
+RUN = {}
 
 params_path = input("PATH of the params file: ")
 
@@ -13,3 +14,4 @@ with open(params_path) as f:
 
     
     CROSSOVER = params['crossover']
+    RUN = params['run']
