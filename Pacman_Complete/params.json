@@ -1,23 +1,9 @@
 {
-    "normal_weights": 
-    {
-        "nearest_pellet":  [0,20],
-        "nearest_food":    [1,5],
-        "distance_ghosts": [7,78],
-        "nearest_ghost":   [0,100]
-    }
-    ,
-    "powered_weights": 
-    {
-        "nearest_pellet":  [0,50],
-        "nearest_food":    [1,5],
-        "distance_ghosts": [7,78],
-        "nearest_ghost":   [0,100]
-    },
+    "weights": [1e-5,20],
     "crossover":
     {
         "alpha": 0.7,
-        "offspring_size": 1,
+        "offspring_size": 2,
         "type": "normal"
     },
     "mutation":
@@ -26,7 +12,7 @@
     },
     "population":
     {
-        "size": 5,
+        "size": 20,
         "tournament_to_select": 5,
         "tournament_n_parents": 2,
         "survival": "elitist"

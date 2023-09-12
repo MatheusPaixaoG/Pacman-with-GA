@@ -2,7 +2,7 @@ import copy, random, sys
 sys.path.append("../")
 
 from GA.Individual import Individual
-from Pacman_Complete.params_reader import WEIGHTS_RANGES, CROSSOVER
+from Pacman_Complete.params_reader import CROSSOVER, N_WEIGHTS
 
 class Crossover:
     
@@ -48,7 +48,7 @@ class Crossover:
         num_children = CROSSOVER["offspring_size"]
 
         for i in range(num_children):
-            cut_point = random.randint(0,len(list(WEIGHTS_RANGES["normal_weights"].values()))-1)
+            cut_point = random.randint(0,N_WEIGHTS-1)
 
             new_individual_dna = self.__base_crossover(parents, cut_point, quant_to_modify, i)
             offspring.append( Individual(new_individual_dna) )
@@ -60,7 +60,7 @@ class Crossover:
         num_children = CROSSOVER["offspring_size"]
 
         for i in range(num_children):
-            cut_point = random.randint(0,len(list(WEIGHTS_RANGES["normal_weights"].values()))-1) + 1
+            cut_point = random.randint(0,N_WEIGHTS-1) + 1
             quant_to_modify = len(parents[0].dna["normal_weights"]) - cut_point
 
             new_individual_dna = self.__base_crossover(parents, cut_point, quant_to_modify, i)

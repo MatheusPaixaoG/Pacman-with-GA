@@ -3,14 +3,14 @@ sys.path.append("../")
 
 from GA.Crossover import Crossover
 from GA.Mutation import Mutation
-from Pacman_Complete.params_reader import CROSSOVER, WEIGHTS_RANGES
+from Pacman_Complete.params_reader import CROSSOVER, N_WEIGHTS, WEIGHTS_RANGES
 
 class GeneticManager:
 
     def random_dna_generator(self):
         return {
-            'normal_weights': [random.uniform(i[0],i[1]) for i in WEIGHTS_RANGES['normal_weights'].values()],
-            'powered_weights': [random.uniform(i[0],i[1]) for i in WEIGHTS_RANGES['powered_weights'].values()]
+            'normal_weights': [random.uniform(WEIGHTS_RANGES[0],WEIGHTS_RANGES[1]) for _ in range(N_WEIGHTS)],
+            'powered_weights': [random.uniform(WEIGHTS_RANGES[0],WEIGHTS_RANGES[1]) for _ in range(N_WEIGHTS)]
         }
     
     def crossover(self, parents):
