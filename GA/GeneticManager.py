@@ -23,5 +23,5 @@ class GeneticManager:
         else:
             print("This crossover type does not exist or was not implemented.")
 
-    def mutation(self, offspring, prob_of_mutation):
-        return Mutation().mutate(offspring, prob_of_mutation)
+    def mutation(self, offspring):
+        return Mutation().mutate(offspring)

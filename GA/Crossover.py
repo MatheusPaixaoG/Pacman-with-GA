@@ -6,13 +6,13 @@ from Pacman_Complete.params_reader import WEIGHTS_RANGES, CROSSOVER
 
 class Crossover:
     
-    def __discrete_choice(parents, gene_idx):
+    def __discrete_choice(self, parents, gene_idx):
         parent = random.choice(parents)
         normal_gene = parent.dna['normal_weights'][gene_idx]
         powered_gene = parent.dna['powered_weights'][gene_idx]
         return normal_gene, powered_gene
 
-    def __aritimetic_combination(parent1, parent2, gene_idx):
+    def __aritimetic_combination(self, parent1, parent2, gene_idx):
         normal_gene = CROSSOVER["alpha"] * parent1.dna['normal_weights'][gene_idx] + (1 - CROSSOVER["alpha"]) * parent2.dna['normal_weights'][gene_idx]
         powered_gene = CROSSOVER["alpha"] * parent1.dna['powered_weights'][gene_idx] + (1 - CROSSOVER["alpha"]) * parent2.dna['powered_weights'][gene_idx]
         return normal_gene, powered_gene
@@ -61,7 +61,7 @@ class Crossover:
 
         for i in range(num_children):
             cut_point = random.randint(0,len(list(WEIGHTS_RANGES["normal_weights"].values()))-1) + 1
-            quant_to_modify = len(parents[0].gene) - cut_point
+            quant_to_modify = len(parents[0].dna["normal_weights"]) - cut_point
 
             new_individual_dna = self.__base_crossover(parents, cut_point, quant_to_modify, i)
             offspring.append( Individual(new_individual_dna) )
@@ -70,7 +70,7 @@ class Crossover:
 
     def complete_crossover(self, parents):
         offspring = []
-        quant_to_modify = len(parents[0].gene)
+        quant_to_modify = len(parents[0].dna["normal_weights"])
         cut_point = 0
         num_children = CROSSOVER["offspring_size"]
 

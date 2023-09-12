@@ -1,5 +1,6 @@
 import copy, random
 
+from Pacman_Complete.params_reader import MUTATION
 
 class Mutation:
 
@@ -25,11 +26,11 @@ class Mutation:
         }
         return new_dna
 
-    def mutate(self, offspring, prob_of_mutation):
+    def mutate(self, offspring):
         new_offspring = []
         for individual in offspring:
             num = random.uniform(0.0,1.0)
-            if (num <= prob_of_mutation): # Mutate
+            if (num <= MUTATION['prob_of_mutation']): # Mutate
                 dna = copy.deepcopy(individual.dna)
                 dna = self.__mutate_dna(dna)
                 individual.set_dna(dna)

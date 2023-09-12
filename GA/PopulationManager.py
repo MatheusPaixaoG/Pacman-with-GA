@@ -11,20 +11,20 @@ class PopulationManager:
 
     def init_population(self):
         self._population = [ Individual(dna=GeneticManager().random_dna_generator()) for _ in range(POPULATION['size']) ]
-    
-    def tournament(self, to_select, n_parents):
-        selected = random.sample(self._population,to_select)
-        sort_selected = selected.sort(key=lambda x : x.fitness())
-        return sort_selected[:n_parents]
+
+    def tournament(self):
+        selected = random.sample(self._population,POPULATION['tournament_to_select'])
+        sort_selected = sorted(selected,key=lambda x : x.get_fitness(), reverse=True)
+        return sort_selected[:POPULATION['tournament_n_parents']]
     
     def survival_elitist(self, offspring):
         new_population = self._population + offspring
-        sort_new_pop = new_population.sort(key=lambda x : x.fitness())
+        sort_new_pop = sorted(new_population,key=lambda x : x.get_fitness(), reverse=True)
         self._population = sort_new_pop[:POPULATION['size']]
     
     def survival_replace(self, parents, offspring):
         n_parents = len(parents)
-        best_offspring = offspring.sort(key=lambda x : x.fitness())[:n_parents]
+        best_offspring = sorted(offspring,key=lambda x : x.get_fitness(), reverse=True)[:n_parents]
         for parent in range(n_parents):
             self._population.remove(parents[parent])
             self._population.append(best_offspring)
