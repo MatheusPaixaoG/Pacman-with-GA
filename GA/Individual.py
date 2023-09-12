@@ -1,5 +1,3 @@
-from Pacman_Complete.vector import Vector2
-
 class Individual(object):
     def __init__(self, dna):
         self.dna = dna   # dict {'normal_weights': list, 'powered_weights': list}

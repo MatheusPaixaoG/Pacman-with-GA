@@ -3,7 +3,7 @@ import copy, random
 import Individual
 from params_reader import WEIGHTS_RANGES, CROSSOVER
 
-class BaseCrossover(object):
+class Crossover:
     
     def __discrete_choice(parents, gene_idx):
         parent = random.choice(parents)

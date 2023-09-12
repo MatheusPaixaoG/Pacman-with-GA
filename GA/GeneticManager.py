@@ -1,6 +1,7 @@
 import copy, random
 
-from Crossover import BaseCrossover
+from Crossover import Crossover
+from Mutation import Mutation
 from params_reader import CROSSOVER, WEIGHTS_RANGES
 
 class GeneticManager:
@@ -13,43 +14,13 @@ class GeneticManager:
     
     def crossover(self, parents):
         if (CROSSOVER["type"] == "simple"):
-            return BaseCrossover().simple_crossover(parents)
+            return Crossover().simple_crossover(parents)
         elif (CROSSOVER["type"] == "normal"):
-            return BaseCrossover().normal_crossover(parents)
+            return Crossover().normal_crossover(parents)
         elif (CROSSOVER["type"] == "complete"):
-            return BaseCrossover().complete_crossover(parents)
+            return Crossover().complete_crossover(parents)
         else:
             print("This crossover type does not exist or was not implemented.")
 
-    def mutate_weights(self, weight_list):
-        weight_list_len = len(weight_list)
-        weight_list_idx = random.randrange(weight_list_len)
-        weight_list[weight_list_idx] = random.uniform(0.0, 10.0) # Range dos pesos TODO: substituir os valores pelos parâmetros
-        return weight_list
-
-    def mutate_dna(self, dna):
-        # Mutate normal weights
-        normal_weights = dna["normal_weights"]
-        normal_weights = self.mutate_weights(normal_weights)
-        
-        # Mutate powered weigths
-        powered_weights = dna["powered_weights"]
-        powered_weights = self.mutate_weights(powered_weights)
-
-        # Make new dna
-        new_dna = {
-            'normal_weights': normal_weights,
-            'powered_weights': powered_weights
-        }
-        return new_dna
-
     def mutation(self, offspring, prob_of_mutation):
-        new_offspring = []
-        for individual in offspring:
-            num = random.uniform(0.0,1.0)
-            if (num <= prob_of_mutation): # Mutate
-                dna = copy.deepcopy(individual.dna)
-                dna = self.mutate_dna(dna)
-                individual.set_dna(dna)
-        new_offspring.append(individual)
-
+        return Mutation().mutate(offspring, prob_of_mutation)
