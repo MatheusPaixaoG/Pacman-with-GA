@@ -108,7 +108,7 @@ class GameController(object):
         self.nodes.denyAccessList(15, 26, UP, self.ghosts)
 
     def update(self, vecToFollow):
-        dt = self.clock.tick(240) / 125.0
+        dt = self.clock.tick(600) / 50.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
         finalScore = None
