@@ -21,6 +21,7 @@ from GA.GeneticManager import GeneticManager
 from GA.PopulationManager import PopulationManager
 from Pacman_Complete.params_reader import POPULATION, RUN
 from Useful_information.Useful_information import UsefulInformation
+from Metrics.GenerationsMetrics import *
 
 class GameController(object):
     def __init__(self):
@@ -315,6 +316,9 @@ def main():
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print(f"Iteration: {iter}")
         print('---------------------')
+
+        generation_metrics = GenerationsMetrics()
+
         for ind in population:
             print(f"Individual: {population.index(ind)}")
             game.startGame()
@@ -328,6 +332,10 @@ def main():
                     ind.set_fitness(finalScore)
                     break
             print(f"FITNESS: {ind.get_fitness()}")
+
+        population_fitness = [pop.get_fitness() for pop in population]
+        avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
+        print(f"Gen {iter}> AVG: {avg_fit} | STD: {std_fit} | BEST: {best_fit}")
 
         parents = pm.tournament()
         offspring = gm.crossover(parents)
@@ -352,6 +360,8 @@ def main():
         
         # TODO: Critérios de parada e sua checagem
 
+    avg_avg_fit, avg_std_fit = generation_metrics.get_avg_metrics()
+    print(f"EXE METRICS> AVG: {avg_avg_fit} | STD: {avg_std_fit}")
 
 
 if __name__ == "__main__":
