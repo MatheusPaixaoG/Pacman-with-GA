@@ -15,6 +15,7 @@ class Pacman(Entity):
         self.setBetweenNodes(LEFT)
         self.alive = True
         self.sprites = PacmanSprites(self)
+        self.prv_position = self.position
 
     def reset(self):
         Entity.reset(self)
@@ -23,6 +24,7 @@ class Pacman(Entity):
         self.alive = True
         self.image = self.sprites.getStartImage()
         self.sprites.reset()
+        self.prv_position = self.position
 
     def die(self):
         self.alive = False
@@ -30,6 +32,7 @@ class Pacman(Entity):
 
     def update(self, dt, vecToFollow = None):	
         self.sprites.update(dt)
+        self.prv_position = self.position
         self.position += self.directions[self.direction]*self.speed*dt
         if (vecToFollow):
             direction = self.getDirectionFromVector(vecToFollow)
@@ -49,6 +52,8 @@ class Pacman(Entity):
             if self.target is self.node:
                 self.direction = STOP
             self.setPosition()
+            self.prv_position = self.position
+
         else: 
             if self.oppositeDirection(direction):
                 self.reverseDirection()
@@ -105,17 +110,42 @@ class Pacman(Entity):
         direction = self.getDirectionFromVector(vector)
         return direction
 
+    def getBetweenPositions(self, num_prv_positions):
+        # Returns positions from the previous to the current one
+        mov_vector = self.position - self.prv_position
+        prv_positions = []
+        delta = mov_vector/num_prv_positions
+
+        # Calculate between positions
+        for i in range(1,num_prv_positions):
+            delta_times_i = Vector2(i * delta.x, i * delta.y)
+            prv_positions.append(self.prv_position + delta_times_i)
+        
+        # Append current one
+        prv_positions.append(self.position) 
+        
+        return prv_positions
+
     def eatPellets(self, pelletList):
-        for pellet in pelletList:
-            if self.collideCheck(pellet):
-                return pellet
+        prv_positions = self.getBetweenPositions(num_prv_positions=2)
+
+        for pos in prv_positions:
+            for pellet in pelletList:
+                if self.collideCheck(pos, pellet):
+                    return pellet
         return None    
     
     def collideGhost(self, ghost):
-        return self.collideCheck(ghost)
+        prv_positions = self.getBetweenPositions(num_prv_positions=1)
+        collided = False
 
-    def collideCheck(self, other):
-        d = self.position - other.position
+        for pos in prv_positions:
+            collided = collided or self.collideCheck(pos,ghost)
+            
+        return collided
+
+    def collideCheck(self, pos, other):
+        d = pos - other.position
         dSquared = d.magnitudeSquared()
         rSquared = (self.collideRadius + other.collideRadius)**2
         if dSquared <= rSquared:
