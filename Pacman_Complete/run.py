@@ -311,13 +311,12 @@ def main():
     pm = PopulationManager()
     pm.init_population()
     population = pm.get_population()
+    generation_metrics = GenerationsMetrics()
 
     for iter in range(RUN['iterations']):
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print(f"Iteration: {iter}")
         print('---------------------')
-
-        generation_metrics = GenerationsMetrics()
 
         for ind in population:
             print(f"Individual: {population.index(ind)}")
@@ -335,7 +334,7 @@ def main():
 
         population_fitness = [pop.get_fitness() for pop in population]
         avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
-        print(f"Gen {iter}> AVG: {avg_fit} | STD: {std_fit} | BEST: {best_fit}")
+        print(f"Gen {iter}> AVG: {avg_fit:3f} | STD: {std_fit:3f} | BEST: {best_fit}")
 
         parents = pm.tournament()
         offspring = gm.crossover(parents)
@@ -360,8 +359,8 @@ def main():
         
         # TODO: Critérios de parada e sua checagem
 
-    avg_avg_fit, avg_std_fit = generation_metrics.get_avg_metrics()
-    print(f"EXE METRICS> AVG: {avg_avg_fit} | STD: {avg_std_fit}")
+    avg_avg_fit, avg_std_fit, best_fit_exe = generation_metrics.get_execution_metrics()
+    print(f"EXE METRICS> AVG: {avg_avg_fit:3f} | STD: {avg_std_fit:3f} | BEST: {best_fit_exe}")
 
 
 if __name__ == "__main__":

@@ -22,7 +22,8 @@ class GenerationsMetrics:
 
         return avg, std, best
     
-    def get_avg_metrics(self):
+    def get_execution_metrics(self):
         avg_avg = sum(self.avg_generations)/len(self.avg_generations) 
-        avg_std = sum(self.std_generations)/len(self.std_generations) 
-        return avg_avg, avg_std
+        avg_std = sum(self.std_generations)/len(self.std_generations)
+        best_fit = self.best_generations[-1]
+        return avg_avg, avg_std, best_fit

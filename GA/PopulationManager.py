@@ -23,6 +23,7 @@ class PopulationManager:
         self._population = sort_new_pop[:POPULATION['size']]
     
     def survival_replace(self, parents, offspring):
+        #TODO: fix replacement
         n_parents = len(parents)
         best_offspring = sorted(offspring,key=lambda x : x.get_fitness(), reverse=True)[:n_parents]
         for parent in range(n_parents):

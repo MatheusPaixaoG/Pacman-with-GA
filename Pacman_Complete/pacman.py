@@ -82,14 +82,14 @@ class Pacman(Entity):
         # Prevents pacman be stucked on
         if not self.validDirection(dir):
             if abs(vector.x) > abs(vector.y):
-                if (vector.y > 0):
+                if abs(vector.y > 0):
                     dir = self.getDirectionFromVector(Vector2(0, vector.y))
                 elif (self.validDirection(DOWN)):
                     dir = DOWN
                 else:
                     dir = UP
             else:
-                if (vector.x > 0):
+                if abs(vector.x > 0):
                     dir = self.getDirectionFromVector(Vector2(vector.x, 0))
                 elif (self.validDirection(RIGHT)):
                     dir = RIGHT
