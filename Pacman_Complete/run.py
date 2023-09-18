@@ -332,7 +332,13 @@ def main():
         playIndividual(ind, game, useful_info)
         print(f"FITNESS: {ind.get_fitness()}")
 
-    for iter in range(RUN['iterations']):
+    iter = 0
+
+    # early stopping vars
+    no_increase_iters = 0
+    prev_avg_fitness = 0
+
+    while iter < RUN['iterations']:
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print(f"Iteration: {iter}")
         print('---------------------')
@@ -347,6 +353,18 @@ def main():
         population_fitness = [pop.get_fitness() for pop in population]
         avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
         print(f"Gen {iter}> AVG: {avg_fit:3f} | STD: {std_fit:3f} | BEST: {best_fit}")
+        
+        
+        if prev_avg_fitness < avg_fit:
+            no_increase_iters = 0
+        else:
+            no_increase_iters += 1
+            if no_increase_iters == RUN['early_stopping_max_iters']:
+                break
+
+        for fit in population_fitness:
+            if fit >= 5800:
+                break
 
         parents = pm.tournament()
         offspring = gm.crossover(parents)
@@ -362,7 +380,22 @@ def main():
         elif POPULATION['survival'] == 'replace':
             pm.survival_replace(parents, mutated_offspring)
         
-        # TODO: Critérios de parada e sua checagem
+        population_fitness = [pop.get_fitness() for pop in population]
+        avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
+
+        if prev_avg_fitness < avg_fit:
+            no_increase_iters = 0
+        else:
+            no_increase_iters += 1
+            if no_increase_iters == RUN['early_stopping_max_iters']:
+                break
+
+        for fit in population_fitness:
+            if fit >= 5800:
+                break
+        
+        prev_avg_fitness = avg_fit
+        iter += 1
 
     avg_avg_fit, avg_std_fit, best_fit_exe = generation_metrics.get_execution_metrics()
     print(f"EXE METRICS> AVG: {avg_avg_fit:3f} | STD: {avg_std_fit:3f} | BEST: {best_fit_exe}")
