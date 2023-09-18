@@ -302,6 +302,19 @@ class GameController(object):
         pygame.display.update()
 
 
+def playIndividual(ind, game, useful_info):
+    game.startGame()
+    finalScore = None
+    while True:
+        useful_info.update()
+        rna = useful_info.current_rna()
+        action = ind.get_action(rna)
+        finalScore = game.update(action)
+        if (finalScore):
+            ind.set_fitness(finalScore)
+            break
+
+
 def main():
     game = GameController()
     useful_info = UsefulInformation(game)
@@ -313,23 +326,22 @@ def main():
     population = pm.get_population()
     generation_metrics = GenerationsMetrics()
 
+    for i in range(len(population)):
+        ind = population[i]
+        print(f"Individual: {i}")
+        playIndividual(ind, game, useful_info)
+        print(f"FITNESS: {ind.get_fitness()}")
+
     for iter in range(RUN['iterations']):
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print(f"Iteration: {iter}")
         print('---------------------')
 
-        for ind in population:
-            print(f"Individual: {population.index(ind)}")
-            game.startGame()
-            finalScore = None
-            while True:
-                useful_info.update()
-                rna = useful_info.current_rna()
-                action = ind.get_action(rna)
-                finalScore = game.update(action)
-                if (finalScore):
-                    ind.set_fitness(finalScore)
-                    break
+        population = pm.get_population()
+
+        for i in range(len(population)):
+            ind = population[i]
+            print(f"Individual: {i}")
             print(f"FITNESS: {ind.get_fitness()}")
 
         population_fitness = [pop.get_fitness() for pop in population]
@@ -341,16 +353,9 @@ def main():
         mutated_offspring = gm.mutation(offspring)
 
         for ind in mutated_offspring:
-            game.startGame()
-            finalScore = None
-            while True:
-                useful_info.update()
-                rna = useful_info.current_rna()
-                action = ind.get_action(rna)
-                finalScore = game.update(action)
-                if (finalScore):
-                    ind.set_fitness(finalScore)
-                    break
+            print(f"New Individual: ")
+            playIndividual(ind, game, useful_info)
+            print(f"FITNESS: {ind.get_fitness()}")
 
         if POPULATION['survival'] == 'elitist':
             pm.survival_elitist(mutated_offspring)
