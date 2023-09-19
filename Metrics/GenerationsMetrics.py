@@ -23,10 +23,10 @@ class GenerationsMetrics:
         return avg, std, best
     
     def get_execution_metrics(self):
-        avg_avg = sum(self.avg_generations)/len(self.avg_generations) 
-        avg_std = sum(self.std_generations)/len(self.std_generations)
+        avg = self.avg_generations[-1] 
+        std = self.std_generations[-1]
         best_fit = self.best_generations[-1]
-        return avg_avg, avg_std, best_fit
+        return avg, std, best_fit
 
     def save_statistic(self, data_path, n_iters, execution_num=1, title="Metrics per iteration"):
         self.save_best_avg_statistics(self.best_generations, self.avg_generations, title, execution_num, data_path)
@@ -63,8 +63,8 @@ class GenerationsMetrics:
     def save_avg_execution_metrics(self, data_path, n_iters):
         path = os.path.join(data_path,f"execution_metrics.txt")
 
-        avg_avg, avg_std, best_fit = self.get_execution_metrics()
+        avg, std, best_fit = self.get_execution_metrics()
 
         with open(path, "w") as file:
-            file_txt = f"Avg Fitness {avg_avg} \nStd Fitness {avg_std} \nNum. of iterations {n_iters} \nBest Fitness {best_fit}"
+            file_txt = f"Avg Fitness {avg} \nStd Fitness {std} \nNum. of iterations {n_iters} \nBest Fitness {best_fit}"
             file.write(file_txt)
