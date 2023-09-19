@@ -15,6 +15,9 @@ class Individual(object):
     def set_dna(self, dna):
         self.dna = dna
 
+    def get_dna(self):
+        return self.dna
+
     def get_action(self, rna):
         genotype = self.genotype(rna)
         actionVec = genotype[0]

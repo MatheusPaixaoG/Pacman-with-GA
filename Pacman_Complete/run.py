@@ -314,6 +314,16 @@ def playIndividual(ind, game, useful_info):
             ind.set_fitness(finalScore)
             break
 
+def saveBestIndividual(population, data_dir_path):
+    best_individual = max(population,key=lambda x : x.get_fitness())
+    best_dna = best_individual.get_dna()
+    file_path = os.path.join(data_dir_path,f"best.pacw")
+
+    with open(file_path, "w") as file: 
+        file_txt = str(best_dna) 
+        file.write(file_txt) 
+    
+    print(f"Best individual weights saved at {file_path}!")
 
 def main():
     game = GameController()
@@ -325,6 +335,10 @@ def main():
     pm.init_population()
     population = pm.get_population()
     generation_metrics = GenerationsMetrics()
+
+    curr_datetime = datetime.now().strftime('%m_%d_%H_%M_%S')
+    data_dir_path = os.path.join(os.getcwd(),'data',f'{curr_datetime}')
+    os.makedirs(data_dir_path, exist_ok=True)
 
     for i in range(len(population)):
         ind = population[i]
@@ -395,8 +409,11 @@ def main():
                 break
         
         prev_avg_fitness = avg_fit
+        saveBestIndividual(pm.get_population(), data_dir_path)
+        
         iter += 1
 
+    
     avg_avg_fit, avg_std_fit, best_fit_exe = generation_metrics.get_execution_metrics()
     print(f"EXE METRICS> AVG: {avg_avg_fit:3f} | STD: {avg_std_fit:3f} | BEST: {best_fit_exe}")
 
