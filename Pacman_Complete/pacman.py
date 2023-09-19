@@ -127,7 +127,7 @@ class Pacman(Entity):
         return prv_positions
 
     def eatPellets(self, pelletList):
-        prv_positions = self.getBetweenPositions(num_prv_positions=2)
+        prv_positions = self.getBetweenPositions(num_prv_positions=4)
 
         for pos in prv_positions:
             for pellet in pelletList:
@@ -136,7 +136,7 @@ class Pacman(Entity):
         return None    
     
     def collideGhost(self, ghost):
-        prv_positions = self.getBetweenPositions(num_prv_positions=1)
+        prv_positions = self.getBetweenPositions(num_prv_positions=4)
         collided = False
 
         for pos in prv_positions:
