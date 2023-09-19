@@ -364,6 +364,7 @@ def main():
     # early stopping vars
     no_increase_iters = 0
     prev_avg_fitness = 0
+    max_reached = False
 
     while iter < RUN['iterations']:
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
@@ -389,7 +390,6 @@ def main():
             if no_increase_iters == RUN['early_stopping_max_iters']:
                 break
 
-        max_reached = False
         for fit in population_fitness:
             if fit >= 5800:
                 max_reached = True
@@ -424,7 +424,11 @@ def main():
 
         for fit in population_fitness:
             if fit >= 5800:
-                break
+                max_reached = True
+
+        if max_reached:
+            saveBestIndividual(pm.get_population(), data_dir_path)
+            break
         
         prev_avg_fitness = avg_fit
         saveBestIndividual(pm.get_population(), data_dir_path)
