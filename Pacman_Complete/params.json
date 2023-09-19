@@ -2,13 +2,14 @@
     "weights": [1e-5,20],
     "crossover":
     {
+    	"prob_of_crossover": 0.7,
         "alpha": 0.7,
         "offspring_size": 2,
         "type": "normal"
     },
     "mutation":
     {
-        "prob_of_mutation": 0.4
+        "prob_of_mutation": 0.6
     },
     "population":
     {

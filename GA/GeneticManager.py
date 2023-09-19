@@ -1,4 +1,4 @@
-import random, sys
+import copy, random, sys
 sys.path.append("../")
 
 from GA.Crossover import Crossover
@@ -14,6 +14,8 @@ class GeneticManager:
         }
     
     def crossover(self, parents):
+        if random.uniform(0.0,1.0) > CROSSOVER['prob_of_crossover']:
+            return [copy.deepcopy(parents[i%len(parents)]) for i in range(CROSSOVER['offspring_size'])]
         if (CROSSOVER["type"] == "simple"):
             return Crossover().simple_crossover(parents)
         elif (CROSSOVER["type"] == "normal"):
