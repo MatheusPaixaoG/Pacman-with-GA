@@ -416,6 +416,7 @@ def main():
     
     avg_avg_fit, avg_std_fit, best_fit_exe = generation_metrics.get_execution_metrics()
     print(f"EXE METRICS> AVG: {avg_avg_fit:3f} | STD: {avg_std_fit:3f} | BEST: {best_fit_exe}")
+    generation_metrics.save_statistic(data_dir_path, iter)
 
 
 if __name__ == "__main__":
