@@ -1,6 +1,7 @@
 # Python libs
 import pygame, sys
 from pygame.locals import *
+import json
 sys.path.append("../")
 
 # Pacman libs
@@ -19,7 +20,8 @@ from mazedata import MazeData
 # GA libs
 from GA.GeneticManager import GeneticManager
 from GA.PopulationManager import PopulationManager
-from Pacman_Complete.params_reader import POPULATION, RUN
+from GA.Individual import Individual
+from Pacman_Complete.params_reader import POPULATION, RUN, INDIVIDUAL
 from Useful_information.Useful_information import UsefulInformation
 from Metrics.GenerationsMetrics import *
 
@@ -320,7 +322,7 @@ def saveBestIndividual(population, data_dir_path):
     file_path = os.path.join(data_dir_path,f"best.pacw")
 
     with open(file_path, "w") as file: 
-        file_txt = str(best_dna) 
+        file_txt = json.dumps(best_dna) 
         file.write(file_txt) 
     
     print(f"Best individual weights saved at {file_path}!")
@@ -328,6 +330,17 @@ def saveBestIndividual(population, data_dir_path):
 def main():
     game = GameController()
     useful_info = UsefulInformation(game)
+
+    # If weights are given, play the individual with these weights
+    print(INDIVIDUAL)
+    if INDIVIDUAL != {}:
+        print("Running given individual")
+        ind = Individual(INDIVIDUAL)
+        playIndividual(ind, game, useful_info)
+        game.printScore()
+        return
+
+    # If weights are not given, runs the GA
 
     gm = GeneticManager()
 

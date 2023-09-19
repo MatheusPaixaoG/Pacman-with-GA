@@ -21,5 +21,9 @@
     {
         "iterations": 1000,
         "early_stopping_max_iters": 20
+    },
+    "individual":
+    {
+
     }
 }

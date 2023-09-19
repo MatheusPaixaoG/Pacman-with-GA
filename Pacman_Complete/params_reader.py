@@ -5,6 +5,7 @@ MUTATION = {}
 POPULATION = {}
 RUN = {}
 WEIGHTS_RANGES = []
+INDIVIDUAL = {}
 
 N_WEIGHTS = 4
 
@@ -17,5 +18,7 @@ with open(params_path) as f:
     POPULATION = params['population']
     RUN = params['run']
     WEIGHTS_RANGES = params['weights']
+
+    INDIVIDUAL = params["individual"]
     
     f.close()
