@@ -365,6 +365,7 @@ def main():
     no_increase_iters = 0
     prev_avg_fitness = 0
     max_reached = False
+    avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
 
     while iter < RUN['iterations']:
         print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
@@ -379,7 +380,6 @@ def main():
             print(f"FITNESS: {ind.get_fitness()}")
 
         population_fitness = [pop.get_fitness() for pop in population]
-        avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
         print(f"Gen {iter}> AVG: {avg_fit:3f} | STD: {std_fit:3f} | BEST: {best_fit}")
         
         
@@ -419,7 +419,9 @@ def main():
             no_increase_iters = 0
         else:
             no_increase_iters += 1
+            print(f"Patience: {no_increase_iters}/{RUN['early_stopping_max_iters']}")
             if no_increase_iters == RUN['early_stopping_max_iters']:
+                print("Early stop")
                 break
 
         for fit in population_fitness:
