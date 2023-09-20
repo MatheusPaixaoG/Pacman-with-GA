@@ -383,19 +383,6 @@ def main():
 
         population_fitness = [pop.get_fitness() for pop in population]
         print(f"Gen {iter}> AVG: {avg_fit:3f} | STD: {std_fit:3f} | BEST: {best_fit}")
-        
-        if prev_avg_fitness < avg_fit:
-            no_increase_iters = 0
-        else:
-            no_increase_iters += 1
-            print(f"Patience: {no_increase_iters}/{RUN['early_stopping_max_iters']}")
-            if no_increase_iters == RUN['early_stopping_max_iters']:
-                print("Early stop")
-                break
-
-        for fit in population_fitness:
-            if fit >= 5800:
-                max_reached = True
 
         if max_reached:
             saveBestIndividual(pm.get_population(), data_dir_path)
