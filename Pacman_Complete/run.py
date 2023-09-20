@@ -365,6 +365,8 @@ def main():
     no_increase_iters = 0
     prev_avg_fitness = 0
     max_reached = False
+    
+    population_fitness = [pop.get_fitness() for pop in population]
     avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
 
     while iter < RUN['iterations']:
