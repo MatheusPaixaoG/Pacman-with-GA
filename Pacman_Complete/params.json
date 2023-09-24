@@ -1,0 +1,30 @@
+{
+    "weights": [1e-5,20],
+    "crossover":
+    {
+    	"prob_of_crossover": 0.7,
+        "alpha": 0.7,
+        "offspring_size": 2,
+        "type": "normal"
+    },
+    "mutation":
+    {
+        "prob_of_mutation": 0.6
+    },
+    "population":
+    {
+        "size": 20,
+        "tournament_to_select": 5,
+        "tournament_n_parents": 2,
+        "survival": "elitist"
+    },
+    "run":
+    {
+        "iterations": 1000,
+        "early_stopping_max_iters": 20
+    },
+    "individual":
+    {
+
+    }
+}

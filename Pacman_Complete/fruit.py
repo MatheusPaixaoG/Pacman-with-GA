@@ -8,9 +8,9 @@ class Fruit(Entity):
         Entity.__init__(self, node)
         self.name = FRUIT
         self.color = GREEN
-        self.lifespan = 5
+        self.lifespan = 0 # Set to autodestroy itself at the time of creation
         self.timer = 0
-        self.destroy = False
+        self.destroy = True # Set to autodestroy itself at the time of creation
         self.points = 100 + level*20
         self.setBetweenNodes(RIGHT)
         self.sprites = FruitSprites(self, level)

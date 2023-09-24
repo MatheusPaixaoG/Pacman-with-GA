@@ -1,5 +1,10 @@
-import pygame
+# Python libs
+import pygame, sys
 from pygame.locals import *
+import json
+sys.path.append("../")
+
+# Pacman libs
 from constants import *
 from pacman import Pacman
 from nodes import NodeGroup
@@ -12,6 +17,14 @@ from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
 
+# GA libs
+from GA.GeneticManager import GeneticManager
+from GA.PopulationManager import PopulationManager
+from GA.Individual import Individual
+from Pacman_Complete.params_reader import POPULATION, RUN, INDIVIDUAL
+from Useful_information.Useful_information import UsefulInformation
+from Metrics.GenerationsMetrics import *
+
 class GameController(object):
     def __init__(self):
         pygame.init()
@@ -21,9 +34,10 @@ class GameController(object):
         self.background_flash = None
         self.clock = pygame.time.Clock()
         self.fruit = None
-        self.pause = Pause(True)
+        self.pause = Pause(False)
+        self.pause.setPause(pauseTime=5)
         self.level = 0
-        self.lives = 5
+        self.lives = 3
         self.score = 0
         self.textgroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
@@ -67,6 +81,10 @@ class GameController(object):
         self.ghosts.clyde.startNode.denyAccess(LEFT, self.ghosts.clyde)
         self.mazedata.obj.denyGhostsAccess(self.ghosts, self.nodes)
 
+        self.pacmanSkipFrames = 25
+        self.pacmanSkipedFrames = 0
+        self.currVecToFollow = None
+
     def startGame_old(self):      
         self.mazedata.loadMaze(self.level)#######
         self.mazesprites = MazeSprites("maze1.txt", "maze1_rotation.txt")
@@ -96,25 +114,31 @@ class GameController(object):
         self.nodes.denyAccessList(12, 26, UP, self.ghosts)
         self.nodes.denyAccessList(15, 26, UP, self.ghosts)
 
-        
-
-    def update(self):
-        dt = self.clock.tick(30) / 1000.0
+    def update(self, vecToFollow):
+        dt = self.clock.tick(240) / 125.0
         self.textgroup.update(dt)
         self.pellets.update(dt)
+        finalScore = None
         if not self.pause.paused:
             self.ghosts.update(dt)      
             if self.fruit is not None:
                 self.fruit.update(dt)
             self.checkPelletEvents()
-            self.checkGhostEvents()
-            self.checkFruitEvents()
+            finalScore = self.checkGhostEvents()
+        
+        # Prevents pacman flickering
+        if  self.pacmanSkipedFrames <= 0:
+            self.pacmanSkipedFrames = self.pacmanSkipFrames
+            self.currVecToFollow = vecToFollow
+        else:
+            self.pacmanSkipedFrames -= 1
+
 
         if self.pacman.alive:
             if not self.pause.paused:
-                self.pacman.update(dt)
+                self.pacman.update(dt, self.currVecToFollow)
         else:
-            self.pacman.update(dt)
+            self.pacman.update(dt, self.currVecToFollow)
 
         if self.flashBG:
             self.flashTimer += dt
@@ -126,10 +150,14 @@ class GameController(object):
                     self.background = self.background_norm
 
         afterPauseMethod = self.pause.update(dt)
+        if not self.pause.paused:
+            self.textgroup.hideText()
         if afterPauseMethod is not None:
             afterPauseMethod()
         self.checkEvents()
         self.render()
+        
+        return finalScore
 
     def checkEvents(self):
         for event in pygame.event.get():
@@ -161,7 +189,7 @@ class GameController(object):
             if self.pellets.isEmpty():
                 self.flashBG = True
                 self.hideEntities()
-                self.pause.setPause(pauseTime=3, func=self.nextLevel)
+                self.pause.setPause(pauseTime=3, func=self.printScore)
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
@@ -183,15 +211,17 @@ class GameController(object):
                         self.ghosts.hide()
                         if self.lives <= 0:
                             self.textgroup.showText(GAMEOVERTXT)
-                            self.pause.setPause(pauseTime=3, func=self.restartGame)
+                            self.pause.setPause(pauseTime=1, func=self.restartGame)
+                            return self.score
                         else:
-                            self.pause.setPause(pauseTime=3, func=self.resetLevel)
+                            self.pause.setPause(pauseTime=1, func=self.resetLevel)
+        return None
     
     def checkFruitEvents(self):
         if self.pellets.numEaten == 50 or self.pellets.numEaten == 140:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.getNodeFromTiles(9, 20), self.level)
-                print(self.fruit)
+                # print(self.fruit)
         if self.fruit is not None:
             if self.pacman.collideCheck(self.fruit):
                 self.updateScore(self.fruit.points)
@@ -223,9 +253,10 @@ class GameController(object):
         self.textgroup.updateLevel(self.level)
 
     def restartGame(self):
-        self.lives = 5
+        self.lives = 3
         self.level = 0
-        self.pause.paused = True
+        self.pause.paused = False
+        self.pause.setPause(pauseTime=5)
         self.fruit = None
         self.startGame()
         self.score = 0
@@ -236,11 +267,15 @@ class GameController(object):
         self.fruitCaptured = []
 
     def resetLevel(self):
-        self.pause.paused = True
+        self.pause.paused = False
+        self.pause.setPause(pauseTime=5)
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
         self.textgroup.showText(READYTXT)
+    
+    def printScore(self):
+        print(f"SCORE: {self.score}")
 
     def updateScore(self, points):
         self.score += points
@@ -269,11 +304,137 @@ class GameController(object):
         pygame.display.update()
 
 
-if __name__ == "__main__":
-    game = GameController()
+def playIndividual(ind, game, useful_info):
     game.startGame()
+    finalScore = None
     while True:
-        game.update()
+        useful_info.update()
+        rna = useful_info.current_rna()
+        action = ind.get_action(rna)
+        finalScore = game.update(action)
+        if (finalScore):
+            ind.set_fitness(finalScore)
+            break
+
+def saveBestIndividual(population, data_dir_path):
+    best_individual = max(population,key=lambda x : x.get_fitness())
+    best_dna = best_individual.get_dna()
+    file_path = os.path.join(data_dir_path,f"best.pacw")
+
+    with open(file_path, "w") as file: 
+        file_txt = json.dumps(best_dna) 
+        file.write(file_txt) 
+    
+    print(f"Best individual weights saved at {file_path}!")
+
+def main():
+    game = GameController()
+    useful_info = UsefulInformation(game)
+
+    # If weights are given, play the individual with these weights
+    print(INDIVIDUAL)
+    if INDIVIDUAL != {}:
+        print("Running given individual")
+        ind = Individual(INDIVIDUAL)
+        playIndividual(ind, game, useful_info)
+        game.printScore()
+        return
+
+    # If weights are not given, runs the GA
+
+    gm = GeneticManager()
+
+    pm = PopulationManager()
+    pm.init_population()
+    population = pm.get_population()
+    generation_metrics = GenerationsMetrics()
+
+    curr_datetime = datetime.now().strftime('%m_%d_%H_%M_%S')
+    data_dir_path = os.path.join(os.getcwd(),'data',f'{curr_datetime}')
+    os.makedirs(data_dir_path, exist_ok=True)
+
+    for i in range(len(population)):
+        ind = population[i]
+        print(f"Individual: {i}")
+        playIndividual(ind, game, useful_info)
+        print(f"FITNESS: {ind.get_fitness()}")
+
+    iter = 0
+
+    # early stopping vars
+    no_increase_iters = 0
+    prev_avg_fitness = 0
+    max_reached = False
+    
+    population_fitness = [pop.get_fitness() for pop in population]
+    avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
+
+    while iter < RUN['iterations']:
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        print(f"Iteration: {iter}")
+        print('---------------------')
+
+        population = pm.get_population()
+
+        for i in range(len(population)):
+            ind = population[i]
+            print(f"Individual: {i}")
+            print(f"FITNESS: {ind.get_fitness()}")
+
+        population_fitness = [pop.get_fitness() for pop in population]
+        print(f"Gen {iter}> AVG: {avg_fit:3f} | STD: {std_fit:3f} | BEST: {best_fit}")
+
+        if max_reached:
+            saveBestIndividual(pm.get_population(), data_dir_path)
+            break
+
+        parents = pm.tournament()
+        offspring = gm.crossover(parents)
+        mutated_offspring = gm.mutation(offspring)
+
+        for ind in mutated_offspring:
+            print(f"New Individual: ")
+            playIndividual(ind, game, useful_info)
+            print(f"FITNESS: {ind.get_fitness()}")
+
+        if POPULATION['survival'] == 'elitist':
+            pm.survival_elitist(mutated_offspring)
+        elif POPULATION['survival'] == 'replace':
+            pm.survival_replace(parents, mutated_offspring)
+        
+        population_fitness = [pop.get_fitness() for pop in population]
+        avg_fit, std_fit, best_fit = generation_metrics.calculate_metrics(population_fitness)
+
+        if prev_avg_fitness < avg_fit:
+            no_increase_iters = 0
+        else:
+            no_increase_iters += 1
+            print(f"Patience: {no_increase_iters}/{RUN['early_stopping_max_iters']}")
+            if no_increase_iters == RUN['early_stopping_max_iters']:
+                print("Early stop")
+                break
+
+        for fit in population_fitness:
+            if fit >= 5800:
+                max_reached = True
+
+        if max_reached:
+            saveBestIndividual(pm.get_population(), data_dir_path)
+            break
+        
+        prev_avg_fitness = avg_fit
+        saveBestIndividual(pm.get_population(), data_dir_path)
+        
+        iter += 1
+
+    
+    avg_avg_fit, avg_std_fit, best_fit_exe = generation_metrics.get_execution_metrics()
+    print(f"EXE METRICS> AVG: {avg_avg_fit:3f} | STD: {avg_std_fit:3f} | BEST: {best_fit_exe}")
+    generation_metrics.save_statistic(data_dir_path, iter)
+
+
+if __name__ == "__main__":
+    main()
 
 
 
