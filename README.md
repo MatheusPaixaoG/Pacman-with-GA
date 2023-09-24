@@ -48,7 +48,7 @@ Code from Pacman available at https://pacmancode.com/
     Early stopping's maximum number of iterations to check if the score doesn't increase.
         n -> positive int (must be less than the number of generations).
 ## _individual:_
-    Recreate and run a individual.
+    Recreate and run a individual. For the best individual's DNA, run the code, and get it on the "data" folder inside an study's "best.pacw" file.
         [normal],[power] -> the individual's dna.
 
 # How to run
